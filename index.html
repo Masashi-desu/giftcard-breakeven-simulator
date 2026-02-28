@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>金券換金 損益分岐点シミュレーター（インフレ考慮）</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="hero">
+        <p class="eyebrow">Gift Card Breakeven Simulator</p>
+        <h1>金券換金 損益分岐点シミュレーター（インフレ考慮）</h1>
+        <p class="lead">
+          金券をすぐ換金して運用した場合に、インフレを考慮した実質購買力で元の額面価値を取り戻せるかを確認します。
+        </p>
+      </header>
+
+      <section class="card" aria-labelledby="input-title">
+        <h2 id="input-title">入力条件</h2>
+        <div class="form-grid">
+          <label class="field">
+            <span class="field-label">額面 F（円）</span>
+            <input id="faceValue" type="number" min="1" step="1" value="10000" inputmode="numeric" />
+            <span class="field-help">金券を使えば得られる価値（現在の購買力）です。</span>
+          </label>
+
+          <label class="field">
+            <span class="field-label">売却金額 S（円）</span>
+            <input id="saleValue" type="number" min="1" step="1" value="9500" inputmode="numeric" />
+            <span class="field-help">金券を換金して、運用に回せる元本です。</span>
+          </label>
+
+          <label class="field">
+            <span class="field-label">名目年利 r（%）</span>
+            <input id="nominalRate" type="number" step="0.01" value="5" inputmode="decimal" />
+            <span class="field-help">運用商品の名目利回りです（税金や手数料は未考慮）。</span>
+          </label>
+
+          <label class="field">
+            <span class="field-label">インフレ率 i（%）</span>
+            <input id="inflationRate" type="number" step="0.01" value="2" inputmode="decimal" />
+            <span class="field-help">物価上昇率です。実質価値はこの分だけ目減りします。</span>
+          </label>
+
+          <label class="field">
+            <span class="field-label">グラフ表示年数上限 N（年）</span>
+            <input id="maxYears" type="number" min="0" max="100" step="1" value="30" inputmode="numeric" />
+            <span class="field-help">0年目からN年目までの推移を表示します。</span>
+          </label>
+        </div>
+        <p id="errorMessage" class="error-message" role="alert" aria-live="polite"></p>
+      </section>
+
+      <section class="card" aria-labelledby="result-title">
+        <h2 id="result-title">計算結果</h2>
+        <dl class="result-grid">
+          <div>
+            <dt>換金ロス L = F - S</dt>
+            <dd id="lossValue">-</dd>
+          </div>
+          <div>
+            <dt>実質成長倍率 g = (1+r)/(1+i)</dt>
+            <dd id="growthFactorValue">-</dd>
+          </div>
+          <div>
+            <dt>実質利回り（近似） g - 1</dt>
+            <dd id="realYieldValue">-</dd>
+          </div>
+          <div>
+            <dt>損益分岐年数 n</dt>
+            <dd id="breakevenValue">-</dd>
+          </div>
+          <div>
+            <dt>N年後の名目運用額 FV<sub>nominal</sub>(N)</dt>
+            <dd id="nominalAtNValue">-</dd>
+          </div>
+          <div>
+            <dt>N年後の実質購買力 FV<sub>real</sub>(N)</dt>
+            <dd id="realAtNValue">-</dd>
+          </div>
+          <div>
+            <dt>現在価値Fとの差 P(N)</dt>
+            <dd id="pnlAtNValue">-</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="card" aria-labelledby="chart-title">
+        <div class="chart-head">
+          <h2 id="chart-title">実質損益の推移グラフ</h2>
+          <p class="chart-subtitle">縦軸: P(n) = FV<sub>real</sub>(n) - F（円） / 横軸: 年数（0..N）</p>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="trendChart" aria-label="実質損益グラフ" role="img"></canvas>
+        </div>
+        <p id="chartNote" class="chart-note"></p>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+    <script src="assets/app.js"></script>
+  </body>
+</html>
